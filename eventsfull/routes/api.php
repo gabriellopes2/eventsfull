@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\SubscriptionsController;
+use App\Http\Controllers\UsersController;
 use App\Models\SubscriptionModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,17 +18,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', [UsersController::class, 'login']);
+
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('events', [EventsController::class, 'index']);
+    Route::get('events/{id}', [EventsController::class, 'searchEventParticipants']);
+    Route::get('subscriptions/{id}', [SubscriptionsController::class, 'searchSubscription']);
+    Route::post('susbcriptions', [SubscriptionsController::class, 'register']);
+    Route::post('checkin', function(Request $request) {
+        $inscricaoController = new SubscriptionModel;
+        $checkin = $inscricaoController->checkin($request);
+
+        return response()->json($checkin);
+    })->name('api.checkin');
+    Route::post('users', [UsersController::class, 'index']);
 });
 
-Route::get('events', [EventsController::class, 'index']);
-Route::get('events/{id}', [EventsController::class, 'searchEventParticipants']);
-Route::get('subscriptions/{id}', [SubscriptionsController::class, 'searchSubscription']);
-Route::post('susbcriptions', [SubscriptionsController::class, 'register']);
-Route::post('/checkin', function(Request $request) {
-    $inscricaoController = new SubscriptionModel;
-    $checkin = $inscricaoController->checkin($request);
-
-    return response()->json($checkin);
-})->name('api.checkin');

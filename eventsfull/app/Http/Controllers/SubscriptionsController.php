@@ -50,7 +50,7 @@ class SubscriptionsController extends Controller
         ]);
     }
 
-    public function getCheckin()
+    /*public function getCheckin()
     {
         //$user = Auth::user();
         //$eventos_id = $users->inscricoes->pluck('eventos_id')->toArray();
@@ -61,7 +61,7 @@ class SubscriptionsController extends Controller
             ->get();
 
         return response()->json($checkins);
-    }
+    }*/
 
     public function checkin(Request $request)
     {

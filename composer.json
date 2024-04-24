@@ -1,0 +1,11 @@
+{
+    "require": {
+        "mailersend/laravel-driver": "^2.5",
+        "laravel/sanctum": "^3.3"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
