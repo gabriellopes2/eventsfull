@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Mail;
 
 class SubscriptionsController extends Controller
 {
+    /**
+     * @OA\Get(
+     *      path="/api/subscriptions/{id}",
+     *      summary="Busca inscrição",
+     *      @OA\Response(response=200, description="Inscrição")
+     * )
+     */
     public function searchSubscription($args)
     {
         //$user = Auth::user();
@@ -22,6 +29,13 @@ class SubscriptionsController extends Controller
         return response()->json($subscription);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/subscriptions",
+     *      summary="Realiza inscrição e envia email",
+     *      @OA\Response(response=200, description="Inscrição realizada")
+     * )
+     */
     public function register(Request $request)
     {
         $data = $request->all();
@@ -38,7 +52,7 @@ class SubscriptionsController extends Controller
 
         $details = [
             'title' => 'Inscrição efetuada com sucesso!',
-            'body' => "Você realizou a inscrição no seguinte evento:<br><h3>$evento->name</h3><br>Você pode acompanhar as suas inscrições em <a href=\"http://eventsfull/subscriptions\">Minhas inscrições</a>."
+            'body' => "Você realizou a inscrição no seguinte evento:<br><h3>$evento->name</h3>."
         ];
 
         // Envia e-mail
@@ -50,22 +64,46 @@ class SubscriptionsController extends Controller
         ]);
     }
 
-    /*public function getCheckin()
+    /**
+     * @OA\Post(
+     *      path="/api/subscriptions/cancel/{id}",
+     *      summary="Cancela uma inscrição e envia um email",
+     *      @OA\Response(response=200, description="Inscrição cancelada")
+     * )
+     */
+    public function cancelSubscription(Request $request, $args)
     {
-        //$user = Auth::user();
-        //$eventos_id = $users->inscricoes->pluck('eventos_id')->toArray();
-        $checkins = SubscriptionModel::select('subscriptions.id as inscricao_id', 'subscriptions.eventos_id as eventos_id', 'subscriptions.updated_at as hora_checkin', 'events.*')
-            ->join('events', 'events.id', '=', 'subscriptions.eventos_id')
-            ->where('subscriptions.checkin', true)
-            ->whereIn('events.id', $eventos_id)
-            ->get();
+        $subscription = SubscriptionModel::find($args);
+        $subscription->active = false;
+        $subscription->save();
 
-        return response()->json($checkins);
-    }*/
+        $event = EventsModel::find($subscription->eventos_id);
 
-    public function checkin(Request $request)
+        $details = [
+            'title' => 'Inscrição cancelada!',
+            'body' => "Você cancelou sua inscrição no seguinte evento:<br><h3>$event->name</h3><br>."
+        ];
+
+        // Envia e-mail
+        $this->sendMail($details);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Inscrição cancelada!',
+            'evento' => $event->name
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/api/checkin/{id}",
+     *      summary="Realiza a presença no evento e envia um email",
+     *      @OA\Response(response=200, description="Presença confirmada")
+     * )
+     */
+    public function checkin(Request $request, $args)
     {
-        $subscription = SubscriptionModel::find($request->get('id'));
+        $subscription = SubscriptionModel::find($args);
         $subscription->checkin = true;
         $subscription->save();
 
@@ -73,7 +111,7 @@ class SubscriptionsController extends Controller
 
         $details = [
             'title' => 'Checkin realizado com sucesso!',
-            'body' => "Você realizou o checkin no seguinte evento:<br><h3>$event->name</h3><br>Você pode acompanhar os seus checkins em <a href=\"http://eventsfull/checkin\">Meus checkins</a>."
+            'body' => "Você realizou o checkin no seguinte evento:<br><h3>$event->name</h3>"
         ];
 
         // Envia e-mail

@@ -24,13 +24,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('events', [EventsController::class, 'index']);
     Route::get('events/{id}', [EventsController::class, 'searchEventParticipants']);
     Route::get('subscriptions/{id}', [SubscriptionsController::class, 'searchSubscription']);
-    Route::post('susbcriptions', [SubscriptionsController::class, 'register']);
-    Route::post('checkin', function(Request $request) {
-        $inscricaoController = new SubscriptionModel;
-        $checkin = $inscricaoController->checkin($request);
-
-        return response()->json($checkin);
-    })->name('api.checkin');
+    Route::post('subscriptions/cancel/{id}', [SubscriptionsController::class, 'cancelSubscription']);
+    Route::post('subscriptions', [SubscriptionsController::class, 'register']);
+    Route::post('checkin/{id}', [SubscriptionsController::class, 'checkin']);
     Route::post('users', [UsersController::class, 'index']);
 });
 

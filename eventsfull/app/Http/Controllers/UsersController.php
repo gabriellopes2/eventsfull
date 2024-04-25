@@ -10,8 +10,15 @@ class UsersController extends Controller
 {
     public function index(Request $request)
     {
+        
+        /**
+         * @OA\Post(
+         *      path="/api/users",
+         *      summary="Cria usuário",
+         *      @OA\Response(response=200, description="Usuário criado!")
+         * )
+         */
         $data = $request->all();
-        //die(var_export($data));
         $name = $data['name'];
         $username = $data['username'];
         $password = $data['password'];
@@ -28,6 +35,13 @@ class UsersController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/login",
+     *      summary="Autenticação",
+     *      @OA\Response(response=200, description="Aunteticação efetuada!")
+     * )
+     */
     public function login(Request $request)
     {
         $user= User::where('username', $request->header('username'))->first();

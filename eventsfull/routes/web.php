@@ -19,18 +19,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-/*Route::middleware(['web'])->group(function () {
-    Route::get('login', [AuthController::class, 'index'])->name('login');
-    Route::post('login', [AuthController::class, 'auth'])->name('auth');
-    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-
-    Route::get('registro', [AuthController::class, 'registro'])->name('registro');
-    Route::post('registro', [AuthController::class, 'registrar'])->name('registrar');
-});*/
-
-//Route::middleware(['auth'])->group(function () {
-    //Route::get('/', [HomeController::class, 'home'])->name('home');
-
-    Route::resource('subscriptions', SubscriptionModel::class);
-    Route::get('checkin', [SubscriptionModel::class, 'getCheckin'])->name('inscricao.index_checkin');
-//});
+Route::get('autentication', function () {
+    return 'Não autenticado!';
+})->name('autentication');
